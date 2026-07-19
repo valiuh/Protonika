@@ -22,11 +22,12 @@ tasks.withType<JavaCompile>().configureEach {
 
 dependencies {
     implementation(projects.shared.virtualMachine)
+    implementation(libs.kotlinx.io.core)
     testImplementation(libs.kotlin.testJunit)
 }
 
 application {
-    mainClass = "com.valiukh.protonika.virtualmachine.cliwrapper.MainKt"
+    mainClass = "com.valiukh.protonika.virtualmachine.cli.NeutronikaKt"
 }
 
 tasks.test {
