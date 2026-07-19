@@ -6,6 +6,7 @@ import com.valiukh.protonika.compose.components.input.MkButtonType
 import com.valiukh.protonika.compose.components.input.buttons
 import com.valiukh.protonika.data.script.ScriptRepository
 import com.valiukh.protonika.domain.scripts.ScriptsRepositoryImpl
+import com.valiukh.protonika.operational.usecases.GetActiveScriptUseCase
 import com.valiukh.protonika.operational.OperationalConsoleViewModel
 import com.valiukh.protonika.operational.usecases.ReadScriptUseCase
 import com.valiukh.protonika.operational.usecases.SaveScriptUseCase
@@ -45,6 +46,9 @@ class OperationalConsoleViewModelTest {
             saveScriptUseCase = SaveScriptUseCase(
                 coroutineDispatcher = Dispatchers.Unconfined,
                 scriptRepository = scriptRepository,
+            ),
+            getActiveScriptUseCase = GetActiveScriptUseCase(
+                scriptsRepository = scriptsRepository,
             ),
         )
     }

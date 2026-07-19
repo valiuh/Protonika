@@ -35,8 +35,9 @@ workflows:
           set -euo pipefail
           ./gradlew \
             :androidApp:testDebugUnitTest \
-            :shared:allTests \
-            :shared:VirtualMachine:allTests \
+            :shared:testAndroidHostTest \
+            :shared:VirtualMachine:testAndroidHostTest \
+            :shared:VirtualMachine:jvmTest \
             :shared:VirtualMachineCli:test \
             --stacktrace
 

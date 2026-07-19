@@ -84,7 +84,7 @@ Therefore, `neutronika` JAR is distributed via Firebase Storage instead.
 Run these commands locally:
 
 ```bash
-./gradlew :androidApp:testDebugUnitTest :shared:allTests :shared:VirtualMachine:allTests :shared:VirtualMachineCli:test
+./gradlew :androidApp:testDebugUnitTest :shared:testAndroidHostTest :shared:VirtualMachine:testAndroidHostTest :shared:VirtualMachine:jvmTest :shared:VirtualMachineCli:test
 ./gradlew :androidApp:assembleDebug
 ./gradlew :shared:VirtualMachineCli:fatJar
 ```
