@@ -15,6 +15,21 @@ If `-s` is missing, the CLI prints:
 Error: Missing required argument -s <script_path>
 ```
 
+## Script Execution
+
+Scripts for this CLI are stored in `*.mk61` files.
+
+Use one of the commands in [Run from terminal](#run-from-terminal) to execute a script.
+
+Where:
+- `-s` specifies the script path.
+- `-r y` (or `yes`) instructs the CLI to produce an output file.
+
+### Output
+
+When output file generation is enabled, the result is saved as `*.cnl` and the
+same data is also printed in the terminal.
+
 ## Compile from terminal
 
 From repository root:
