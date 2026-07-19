@@ -1,0 +1,171 @@
+workflows:
+  android-tests:
+    name: Android Tests (all branches)
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      java: 17
+      groups:
+        - codemagic_api_credentials
+      vars:
+        DEPLOY_WORKFLOW_ID: android-build-deploy
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: "*"
+          include: true
+          source: true
+      cancel_previous_builds: true
+    scripts:
+      - name: Stage 1.1 - Build environment diagnostics
+        script: |
+          set -euo pipefail
+          java -version
+          ./gradlew --version
+
+      - name: Stage 1.2 - Run all unit and host tests
+        script: |
+          set -euo pipefail
+          ./gradlew \
+            :androidApp:testDebugUnitTest \
+            :shared:allTests \
+            :shared:VirtualMachine:allTests \
+            :shared:VirtualMachineCli:test \
+            --stacktrace
+
+      - name: Stage 1.3 - UI tests placeholder (Firebase Test Lab)
+        script: |
+          set -euo pipefail
+          echo "Placeholder for future Firebase Test Lab execution."
+          echo "Expected inputs: FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT, test APK artifacts."
+
+      - name: Stage 1.4 - Trigger deploy workflow on main after successful tests
+        script: |
+          set -euo pipefail
+
+          if [ "${CM_BRANCH}" != "main" ]; then
+            echo "Branch '${CM_BRANCH}' is not main. Skipping deploy trigger."
+            exit 0
+          fi
+
+          if [ -z "${CM_API_TOKEN:-}" ] || [ -z "${CM_APP_ID:-}" ]; then
+            echo "CM_API_TOKEN and CM_APP_ID are required in codemagic_api_credentials."
+            exit 1
+          fi
+
+          payload=$(cat <<JSON
+          {
+            "appId": "${CM_APP_ID}",
+            "workflowId": "${DEPLOY_WORKFLOW_ID}",
+            "branch": "main"
+          }
+          JSON
+          )
+
+          echo "Triggering workflow '${DEPLOY_WORKFLOW_ID}' for branch main."
+          curl -sS -f \
+            -H "Content-Type: application/json" \
+            -H "x-auth-token: ${CM_API_TOKEN}" \
+            --data "${payload}" \
+            -X POST https://api.codemagic.io/builds
+
+    artifacts:
+      - build/reports/**/*
+      - build/test-results/**/*
+      - androidApp/build/reports/**/*
+      - androidApp/build/test-results/**/*
+      - shared/build/reports/**/*
+      - shared/build/test-results/**/*
+      - shared/VirtualMachine/build/reports/**/*
+      - shared/VirtualMachine/build/test-results/**/*
+      - shared/VirtualMachineCli/build/reports/**/*
+      - shared/VirtualMachineCli/build/test-results/**/*
+
+  android-build-deploy:
+    name: Android Build and Firebase Deploy (main only)
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      java: 17
+      groups:
+        - firebase_distribution_credentials
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+    scripts:
+      - name: Stage 2.1 - Enforce main branch
+        script: |
+          set -euo pipefail
+          if [ "${CM_BRANCH}" != "main" ]; then
+            echo "This workflow is restricted to main. Current branch: ${CM_BRANCH}"
+            exit 1
+          fi
+
+      - name: Stage 2.2 - Generate release notes from latest commit
+        script: |
+          set -euo pipefail
+          git log -1 --pretty=format:"%h %s%n%n%b" > release_notes.txt
+          echo "release_notes.txt generated"
+          cat release_notes.txt
+
+      - name: Stage 2.3 - Build Android debug APK
+        script: |
+          set -euo pipefail
+          ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Stage 2.4 - Build runnable neutronika JAR
+        script: |
+          set -euo pipefail
+          ./gradlew :shared:VirtualMachineCli:fatJar --stacktrace
+          ls -lah shared/VirtualMachineCli/build/libs
+
+      - name: Stage 2.5 - Upload neutronika JAR to Firebase Storage
+        script: |
+          set -euo pipefail
+
+          if [ -z "${FIREBASE_SERVICE_ACCOUNT:-}" ]; then
+            echo "FIREBASE_SERVICE_ACCOUNT is required."
+            exit 1
+          fi
+
+          if [ -z "${FIREBASE_PROJECT_ID:-}" ] || [ -z "${FIREBASE_STORAGE_BUCKET:-}" ]; then
+            echo "FIREBASE_PROJECT_ID and FIREBASE_STORAGE_BUCKET are required."
+            exit 1
+          fi
+
+          SERVICE_ACCOUNT_PATH="${CM_BUILD_DIR}/firebase-service-account.json"
+          echo "${FIREBASE_SERVICE_ACCOUNT}" > "${SERVICE_ACCOUNT_PATH}"
+
+          gcloud auth activate-service-account --key-file="${SERVICE_ACCOUNT_PATH}"
+          gcloud --quiet config set project "${FIREBASE_PROJECT_ID}"
+
+          JAR_PATH=$(find shared/VirtualMachineCli/build/libs -maxdepth 1 -type f -name "*-all.jar" | head -n 1)
+          if [ -z "${JAR_PATH}" ]; then
+            echo "No neutronika fat JAR found."
+            exit 1
+          fi
+
+          DESTINATION="gs://${FIREBASE_STORAGE_BUCKET}/neutronika/${CM_COMMIT}/$(basename "${JAR_PATH}")"
+          gsutil cp "${JAR_PATH}" "${DESTINATION}"
+          echo "Uploaded neutronika JAR to ${DESTINATION}"
+
+    artifacts:
+      - release_notes.txt
+      - androidApp/build/outputs/**/*.apk
+      - shared/VirtualMachineCli/build/libs/*-all.jar
+
+    publishing:
+      firebase:
+        firebase_service_account: $FIREBASE_SERVICE_ACCOUNT
+        android:
+          app_id: $FIREBASE_ANDROID_APP_ID
+          groups:
+            - $FIREBASE_ANDROID_TESTER_GROUP
+          artifact_type: apk

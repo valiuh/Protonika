@@ -13,6 +13,9 @@
 
 # Local machine configuration
 local.properties
+.codemagic.secrets.env
+firebase-service-account.json
+release_notes.txt
 
 # IDEs
 .idea/

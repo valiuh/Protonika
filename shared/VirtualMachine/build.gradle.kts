@@ -16,6 +16,12 @@ kotlin {
         }
     }
 
+    jvm {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
+
     androidLibrary {
         namespace = "com.valiukh.protonika.virtualmachine"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
