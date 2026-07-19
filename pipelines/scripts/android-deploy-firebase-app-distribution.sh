@@ -41,7 +41,17 @@ if [ -z "${APK_PATH}" ]; then
   exit 1
 fi
 
+BRANCH_NAME="${CM_BRANCH:-unknown-branch}"
+RUN_ID="${CM_BUILD_ID:-${CM_BUILD_NUMBER:-${BUILD_NUMBER:-}}}"
+if [ -z "${RUN_ID}" ]; then
+  RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)"
+fi
+RELEASE_NOTES="Build from ${BRANCH_NAME} #${RUN_ID}"
+
+echo "Distributing APK: ${APK_PATH}"
+echo "Release notes: ${RELEASE_NOTES}"
+
 firebase appdistribution:distribute "${APK_PATH}" \
   --app "${FIREBASE_ANDROID_APP_ID}" \
   --groups "${FIREBASE_ANDROID_TESTER_GROUP}" \
-  --release-notes-file release_notes.txt
+  --release-notes "${RELEASE_NOTES}"

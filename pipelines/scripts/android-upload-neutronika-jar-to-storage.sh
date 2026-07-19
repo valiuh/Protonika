@@ -38,6 +38,35 @@ if [ -z "${JAR_PATH}" ]; then
   exit 1
 fi
 
-DESTINATION="gs://${FIREBASE_STORAGE_BUCKET}/neutronika/${CM_COMMIT}/$(basename "${JAR_PATH}")"
+# Accept FIREBASE_STORAGE_BUCKET as one of:
+# 1) plain bucket name, 2) gs://bucket-name, 3) bucket with optional prefix path.
+BUCKET_INPUT="${FIREBASE_STORAGE_BUCKET}"
+while [[ "${BUCKET_INPUT}" == gs://* ]]; do
+  BUCKET_INPUT="${BUCKET_INPUT#gs://}"
+done
+while [[ "${BUCKET_INPUT}" == https://storage.googleapis.com/* ]]; do
+  BUCKET_INPUT="${BUCKET_INPUT#https://storage.googleapis.com/}"
+done
+BUCKET_INPUT="${BUCKET_INPUT%/}"
+
+BUCKET_NAME="${BUCKET_INPUT%%/*}"
+BUCKET_PREFIX=""
+if [[ "${BUCKET_INPUT}" == */* ]]; then
+  BUCKET_PREFIX="${BUCKET_INPUT#*/}"
+fi
+
+if [ -z "${BUCKET_NAME}" ] || [[ "${BUCKET_NAME}" == *:* ]]; then
+  echo "Invalid FIREBASE_STORAGE_BUCKET: '${FIREBASE_STORAGE_BUCKET}'."
+  echo "Use a bucket name (example: 'protonika-f5f53.firebasestorage.app') or 'gs://<bucket>'."
+  exit 1
+fi
+
+DESTINATION_BASE="gs://${BUCKET_NAME}"
+if [ -n "${BUCKET_PREFIX}" ]; then
+  DESTINATION_BASE="${DESTINATION_BASE}/${BUCKET_PREFIX}"
+fi
+
+COMMIT_REF="${CM_COMMIT:-local}"
+DESTINATION="${DESTINATION_BASE}/neutronika/${COMMIT_REF}/$(basename "${JAR_PATH}")"
 gsutil cp "${JAR_PATH}" "${DESTINATION}"
 echo "Uploaded neutronika JAR to ${DESTINATION}"
