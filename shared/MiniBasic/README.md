@@ -711,30 +711,48 @@ is reached.
 `END` terminates execution.
 
 `STOP` suspends execution according to the capabilities of the runtime environment.
-
 ---
 
 # Built-in Mathematical Functions
 
-MiniBasic provides a collection of built-in mathematical functions.
+MiniBasic provides a collection of built-in mathematical functions and constants.
 
-Each function accepts a single numeric argument and returns a numeric result.
+Whenever possible, these functions are translated directly into a single MK-61 virtual machine instruction. Functions that do not have a direct hardware equivalent may be translated into a sequence of calculator instructions.
 
-These functions are translated into the corresponding MK-61 calculator instructions whenever such instructions exist.
+Unless otherwise specified, each function accepts a single numeric argument and returns a numeric result.
 
-| Function | Description |
-|----------|-------------|
-| `ABS(x)` | Absolute value |
-| `SIN(x)` | Sine |
-| `COS(x)` | Cosine |
-| `TAN(x)` | Tangent |
-| `ASIN(x)` | Arc sine |
-| `ACOS(x)` | Arc cosine |
-| `ATN(x)` | Arc tangent |
-| `LN(x)` | Natural logarithm |
-| `LOG(x)` | Base-10 logarithm |
-| `EXP(x)` | Exponential function |
-| `SQR(x)` | Square root |
+## Exponential and Logarithmic Functions
+
+| Function    | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| `EXP10(x)`  | Calculates (10^x).                                           |
+| `EXP(x)`    | Calculates (e^x).                                            |
+| `LOG(x)`    | Base-10 logarithm.                                           |
+| `LN(x)`     | Natural logarithm.                                           |
+| `POW(x, y)` | Raises `x` to the power `y`. Equivalent to the `^` operator. |
+
+Example
+
+```basic
+LET value = EXP(2)
+
+LET power = POW(2, 8)
+```
+
+---
+
+## Trigonometric Functions
+
+| Function  | Description |
+| --------- | ----------- |
+| `SIN(x)`  | Sine        |
+| `COS(x)`  | Cosine      |
+| `TAN(x)`  | Tangent     |
+| `ASIN(x)` | Arc sine    |
+| `ACOS(x)` | Arc cosine  |
+| `ATN(x)`  | Arc tangent |
+
+The angle unit (degrees or radians) depends on the current configuration of the virtual machine.
 
 Example
 
@@ -749,6 +767,85 @@ PRINT x
 
 PRINT y
 ```
+
+---
+
+## Numeric Functions
+
+| Function    | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `ABS(x)`    | Absolute value                                         |
+| `SQRT(x)`   | Square root                                            |
+| `SQR(x)`    | Square (`x²`)                                          |
+| `RECIP(x)`  | Reciprocal (`1/x`)                                     |
+| `FLOOR(x)`  | Integer part of a number                               |
+| `FRAC(x)`   | Fractional part of a number                            |
+| `SIGN(x)`   | Returns `-1`, `0`, or `1` depending on the sign of `x` |
+| `MAX(x, y)` | Returns the larger of two values                       |
+
+Example
+
+```basic
+LET root = SQRT(25)
+
+LET square = SQR(5)
+
+LET reciprocal = RECIP(4)
+
+LET integerPart = FLOOR(3.75)
+
+LET fractionalPart = FRAC(3.75)
+
+LET largest = MAX(a, b)
+```
+
+---
+
+## Mathematical Constants
+
+MiniBasic provides built-in mathematical constants.
+
+| Constant | Description             |
+| -------- | ----------------------- |
+| `PI`     | Mathematical constant π |
+| `E`      | Euler's number          |
+
+Example
+
+```basic
+LET circumference = 2 * PI * radius
+
+LET growth = E ^ x
+```
+
+---
+
+## Random Number Generation
+
+| Function   | Description                                            |
+| ---------- | ------------------------------------------------------ |
+| `RANDOM()` | Generates a pseudo-random number in the range `[0, 1)` |
+
+Example
+
+```basic
+LET value = RANDOM()
+```
+
+---
+
+## Angle Conversion Functions
+
+The MK-61 instruction set includes several specialized functions for converting between decimal and degree-minute-second representations.
+
+| Function        | Description                                                                            |
+| --------------- | -------------------------------------------------------------------------------------- |
+| `HM_TO_DEG(x)`  | Converts degrees (hours), minutes and fractions of minutes into decimal representation |
+| `DEG_TO_HM(x)`  | Converts decimal representation into degrees (hours), minutes and fractions of minutes |
+| `HMS_TO_DEG(x)` | Converts degrees (hours), minutes, seconds into decimal representation                 |
+| `DEG_TO_HMS(x)` | Converts decimal representation into degrees (hours), minutes and seconds              |
+
+These functions are primarily useful for scientific and navigation calculations.
 
 ---
 
@@ -831,12 +928,12 @@ The lexer converts the input text into a sequence of tokens.
 
 Typical token types include
 
-- keywords
-- identifiers
-- numbers
-- operators
-- delimiters
-- parentheses
+* keywords
+* identifiers
+* numbers
+* operators
+* delimiters
+* parentheses
 
 Example
 
@@ -897,12 +994,12 @@ The semantic analysis phase validates the program.
 
 Typical checks include
 
-- undefined variables,
-- duplicate declarations,
-- invalid subroutine references,
-- invalid loop construction,
-- incorrect function usage,
-- exceeding the available number of calculator registers.
+* undefined variables,
+* duplicate declarations,
+* invalid subroutine references,
+* invalid loop construction,
+* incorrect function usage,
+* exceeding the available number of calculator registers.
 
 Errors detected during semantic analysis prevent code generation.
 
@@ -929,10 +1026,10 @@ LET c = 2
 becomes
 
 | Variable | Register |
-|-----------|----------|
-| a | 0 |
-| b | 1 |
-| c | 2 |
+| -------- | -------- |
+| a        | 0        |
+| b        | 1        |
+| c        | 2        |
 
 This mapping is maintained throughout the generated program.
 
@@ -976,16 +1073,16 @@ Every language construct eventually becomes one or more calculator instructions.
 
 Examples
 
-| MiniBasic | Conceptual MK-61 Operation |
-|-----------|----------------------------|
-| `LET a = x` | Evaluate expression → Store in register |
-| `INPUT a` | User input → X → Memory Register |
-| `PRINT a` | Memory Register → X |
-| `GOTO` | Unconditional jump |
-| `GOSUB` | Call subroutine |
-| `RETURN` | Return from subroutine |
-| `IF` | Conditional branch |
-| `FOR` | Counter initialization and conditional branching |
+| MiniBasic   | Conceptual MK-61 Operation                       |
+| ----------- | ------------------------------------------------ |
+| `LET a = x` | Evaluate expression → Store in register          |
+| `INPUT a`   | User input → X → Memory Register                 |
+| `PRINT a`   | Memory Register → X                              |
+| `GOTO`      | Unconditional jump                               |
+| `GOSUB`     | Call subroutine                                  |
+| `RETURN`    | Return from subroutine                           |
+| `IF`        | Conditional branch                               |
+| `FOR`       | Counter initialization and conditional branching |
 
 The language therefore remains very close to the hardware while providing a significantly more readable programming model.
 
@@ -995,13 +1092,13 @@ The language therefore remains very close to the hardware while providing a sign
 
 Because MiniBasic targets hardware with severe resource limitations, programmers are encouraged to follow several guidelines.
 
-- Reuse variables whenever possible.
-- Avoid creating unnecessary temporary variables.
-- Prefer simple expressions.
-- Keep subroutines small.
-- Minimize register usage.
-- Use descriptive names during development.
-- Consider register-oriented names (`r0`, `r1`, `r2`, ...) when optimizing for the MK-61.
+* Reuse variables whenever possible.
+* Avoid creating unnecessary temporary variables.
+* Prefer simple expressions.
+* Keep subroutines small.
+* Minimize register usage.
+* Use descriptive names during development.
+* Consider register-oriented names (`r0`, `r1`, `r2`, ...) when optimizing for the MK-61.
 
 Following these recommendations generally results in more compact generated code.
 
@@ -1048,9 +1145,9 @@ IF d < 0 THEN
 
 ELSE
 
-    LET x1 = (-b + SQR(d)) / (2 * a)
+    LET x1 = (-b + SQRT(d)) / (2 * a)
 
-    LET x2 = (-b - SQR(d)) / (2 * a)
+    LET x2 = (-b - SQRT(d)) / (2 * a)
 
     PRINT x1
 
@@ -1092,19 +1189,19 @@ END
 
 MiniBasic intentionally differs from traditional BASIC dialects.
 
-| Feature | MiniBasic |
-|----------|------------|
-| Numeric variables | ✔ |
-| Strings | ✘ |
-| Arrays | ✘ |
-| Dynamic memory | ✘ |
-| Heap | ✘ |
-| Local variables | ✘ |
-| Call stack | ✘ |
-| Recursion | ✘ |
-| Register allocation | ✔ |
-| RPN code generation | ✔ |
-| MK-61 compatible | ✔ |
+| Feature             | MiniBasic |
+| ------------------- | --------- |
+| Numeric variables   | ✔         |
+| Strings             | ✘         |
+| Arrays              | ✘         |
+| Dynamic memory      | ✘         |
+| Heap                | ✘         |
+| Local variables     | ✘         |
+| Call stack          | ✘         |
+| Recursion           | ✘         |
+| Register allocation | ✔         |
+| RPN code generation | ✔         |
+| MK-61 compatible    | ✔         |
 
 ---
 
