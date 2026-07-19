@@ -40,6 +40,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.shared.virtualMachine)
+            implementation(projects.shared.miniBasic)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
