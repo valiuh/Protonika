@@ -1,0 +1,52 @@
+workflows:
+  android-build-deploy:
+    name: Android Build and Firebase Deploy (main only)
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    environment:
+      java: 17
+      groups:
+        - firebase_distribution_credentials
+    cache:
+      cache_paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+    scripts:
+      - name: Stage 2.1 - Enforce main branch
+        script: |
+          set -euo pipefail
+          if [ "${CM_BRANCH}" != "main" ]; then
+            echo "This workflow is restricted to main. Current branch: ${CM_BRANCH}"
+            exit 1
+          fi
+
+      - name: Stage 2.2 - Generate release notes from latest commit
+        script: |
+          set -euo pipefail
+          git log -1 --pretty=format:"%h %s%n%n%b" > release_notes.txt
+          echo "release_notes.txt generated"
+          cat release_notes.txt
+
+      - name: Stage 2.3 - Build Android debug APK
+        script: |
+          set -euo pipefail
+          ./gradlew :androidApp:assembleDebug --stacktrace
+
+      - name: Stage 2.4 - Deploy Android debug APK to Firebase App Distribution
+        script: |
+          bash pipelines/scripts/android-deploy-firebase-app-distribution.sh
+
+      - name: Stage 2.5 - Build Neutronika Mk-61 Virtual Machine JAR
+        script: |
+          set -euo pipefail
+          ./gradlew :shared:VirtualMachineCli:fatJar --stacktrace
+          ls -lah shared/VirtualMachineCli/build/libs
+
+      - name: Stage 2.6 - Upload Neutronika Mk-61 Virtual Machine JAR to Firebase Storage
+        script: |
+          bash pipelines/scripts/android-upload-neutronika-jar-to-storage.sh
+
+    artifacts:
+      - release_notes.txt
+      - androidApp/build/outputs/**/*.apk
+      - shared/VirtualMachineCli/build/libs/*-all.jar

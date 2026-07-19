@@ -3,10 +3,10 @@ Protonika is a Kotlin Multiplatform app that recreates the legendary MK-61 progr
 
 ## Workflow status
 
-### Run tests status
+### All tests status
 [![Codemagic android-tests status](https://api.codemagic.io/apps/6a5a32456e68dcef2c17842d/android-tests/status_badge.svg)](https://codemagic.io/app/6a5a32456e68dcef2c17842d/android-tests/latest_build)
 
-### Run build and deploy status
+### Build and deploy status
 [![Codemagic android-build-deploy status](https://api.codemagic.io/apps/6a5a32456e68dcef2c17842d/android-build-deploy/status_badge.svg)](https://codemagic.io/app/6a5a32456e68dcef2c17842d/android-build-deploy/latest_build)
 
 ## CI/CD
