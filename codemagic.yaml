@@ -26,6 +26,7 @@ workflows:
       - name: Stage 1.1 - Build environment diagnostics
         script: |
           set -euo pipefail
+          rm -f gradle/gradle-daemon-jvm.properties
           java -version
           ./gradlew --version
 

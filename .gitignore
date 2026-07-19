@@ -6,6 +6,7 @@
 .gradle/
 **/build/
 !gradle/wrapper/gradle-wrapper.jar
+gradle/gradle-daemon-jvm.properties
 
 # Kotlin / KMP tooling
 .kotlin/
