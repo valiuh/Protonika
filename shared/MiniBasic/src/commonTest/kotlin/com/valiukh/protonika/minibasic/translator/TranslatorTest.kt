@@ -1,12 +1,12 @@
 package com.valiukh.protonika.minibasic.translator
 
 import com.valiukh.protonika.minibasic.SemanticError
-import com.valiukh.protonika.minibasic.allocateMemory
-import com.valiukh.protonika.minibasic.checkSemantics
-import com.valiukh.protonika.minibasic.generateOrElse
-import com.valiukh.protonika.minibasic.parseWithParser
+import com.valiukh.protonika.minibasic.dsl.allocateMemory
+import com.valiukh.protonika.minibasic.dsl.checkSemantics
+import com.valiukh.protonika.minibasic.dsl.generateOrElse
+import com.valiukh.protonika.minibasic.dsl.parseWithParser
 import com.valiukh.protonika.minibasic.parsers.LLParser
-import com.valiukh.protonika.minibasic.tokenize
+import com.valiukh.protonika.minibasic.dsl.tokenize
 import com.valiukh.protonika.virtualmachine.Command
 import com.valiukh.protonika.virtualmachine.Mk61
 import kotlin.test.Test

@@ -1,4 +1,14 @@
-package com.valiukh.protonika.minibasic
+package com.valiukh.protonika.minibasic.dsl
+
+import com.valiukh.protonika.minibasic.ASTNode
+import com.valiukh.protonika.minibasic.CodeGenerator
+import com.valiukh.protonika.minibasic.Lexer
+import com.valiukh.protonika.minibasic.Parser
+import com.valiukh.protonika.minibasic.RegisterAllocationException
+import com.valiukh.protonika.minibasic.RegisterAllocator
+import com.valiukh.protonika.minibasic.SemanticAnalyzer
+import com.valiukh.protonika.minibasic.SemanticError
+import com.valiukh.protonika.minibasic.Token
 
 fun String.tokenize(): List<Token> = Lexer().tokenize(this)
 
@@ -41,7 +51,7 @@ fun List<Token>.parseWithParser(parser: Parser): MiniBasicProgram =
     MiniBasicProgram(parse(parser))
 
 /**
- * Optional pipeline step that runs [SemanticAnalyzer] and records any problems
+ * Optional pipeline step that runs [com.valiukh.protonika.minibasic.SemanticAnalyzer] and records any problems
  * it finds. Once errors are present the step is a no-op, so it is safe to chain.
  */
 fun MiniBasicProgram.checkSemantics(): MiniBasicProgram {
@@ -53,7 +63,7 @@ fun MiniBasicProgram.checkSemantics(): MiniBasicProgram {
 /**
  * Allocates MK-61 registers to the program's variables using [RegisterAllocator].
  *
- * A [RegisterAllocationException] is captured as a [SemanticError] instead of being
+ * A [com.valiukh.protonika.minibasic.RegisterAllocationException] is captured as a [SemanticError] instead of being
  * thrown, so the failure surfaces through [generateOrElse].
  */
 fun MiniBasicProgram.allocateMemory(): MiniBasicProgram {

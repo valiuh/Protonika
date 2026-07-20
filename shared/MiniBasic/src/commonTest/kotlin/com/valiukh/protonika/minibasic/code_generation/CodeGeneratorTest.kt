@@ -5,9 +5,9 @@ import com.valiukh.protonika.minibasic.CodeGenerator
 import com.valiukh.protonika.minibasic.LetNode
 import com.valiukh.protonika.minibasic.LiteralNode
 import com.valiukh.protonika.minibasic.PrintNode
-import com.valiukh.protonika.minibasic.parse
+import com.valiukh.protonika.minibasic.dsl.parse
 import com.valiukh.protonika.minibasic.parsers.LLParser
-import com.valiukh.protonika.minibasic.tokenize
+import com.valiukh.protonika.minibasic.dsl.tokenize
 import com.valiukh.protonika.virtualmachine.Command
 import com.valiukh.protonika.virtualmachine.Mk61
 import kotlin.test.Test

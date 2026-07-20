@@ -13,9 +13,9 @@ import com.valiukh.protonika.minibasic.OperatorBinaryNode
 import com.valiukh.protonika.minibasic.OperatorUnaryNode
 import com.valiukh.protonika.minibasic.PrintNode
 import com.valiukh.protonika.minibasic.ReturnNode
-import com.valiukh.protonika.minibasic.parse
+import com.valiukh.protonika.minibasic.dsl.parse
 import com.valiukh.protonika.minibasic.parsers.LLParser
-import com.valiukh.protonika.minibasic.tokenize
+import com.valiukh.protonika.minibasic.dsl.tokenize
 import kotlin.test.Test
 import kotlin.test.assertNull
 
