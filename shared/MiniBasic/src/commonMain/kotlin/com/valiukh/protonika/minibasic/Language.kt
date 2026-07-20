@@ -29,132 +29,232 @@ enum class Keyword(val keyword: String) {
  */
 enum class Operator(val operator: String) {
     /**
-     *Unary operator: get the absolute value of a number.
-     */
-    ABS("ABS"),
-
-    /**
-     *Unary operator: get the cosine of an angle.
-     */
-    COS("COS"),
-
-    /**
-     *Unary operator: get the sine of an angle.
-     */
-    SIN("SIN"),
-
-    /**
-     *Unary operator: get the tangent of an angle.
-     */
-    TAN("TAN"),
-
-    /**
-     *Unary operator: get the arccosine of a number.
-     */
-    ACOS("ACOS"),
-
-    /**
-     *Unary operator: get the arcsine of a number.
-     */
-    ASIN("ASIN"),
-
-    /**
-     *Unary operator: get the arctangent of a number.
-     */
-    ATN("ATN"),
-
-    /**
-     *Unary operator: get the logarithm of a number.
-     */
-    LOG("LOG"),
-
-    /**
-     *Unary operator: get the natural logarithm of a number.
-     */
-    LN("LN"),
-
-    /**
-     *Unary operator: get the exponential of a number.
-     */
-    EXP("EXP"),
-
-    /**
-     *Unary operator: get the square root of a number.
-     */
-    SQR("SQR"),
-
-    /**
-     *Binary operator: add two numbers.
+     * Binary operator: add two numbers.
      */
     PLUS("+"),
 
     /**
-     *Binary operator: subtract two numbers.
+     * Binary operator: subtract two numbers.
      */
     MINUS("-"),
 
     /**
-     *Binary operator: multiply two numbers.
+     * Binary operator: multiply two numbers.
      */
     MULTIPLY("*"),
 
     /**
-     *Binary operator: divide two numbers.
+     * Binary operator: divide two numbers.
      */
     DIVIDE("/"),
 
     /**
-     *Binary operator: raise a number to a power.
-     */
-    GREATER_THAN(">"),
-
-    /**
-     *Binary operator: raise a number to a power.
-     */
-    LESS_THAN("<"),
-
-    /**
-     *Binary operator: raise a number to a power.
-     */
-    GREATER_THAN_OR_EQUAL(">="),
-
-    /**
-     *Binary operator: raise a number to a power.
-     */
-    LESS_THAN_OR_EQUAL("<="),
-
-    /**
-     *Binary operator: raise a number to a power.
-     */
-    EQUAL("="),
-
-    /**
-     *Binary operator: raise a number to a power.
+     * Binary operator: raise a number to a power.
      */
     POWER("^"),
 
     /**
-     *Binary operator: raise a number to a power.
+     * Relational operator: equal.
+     */
+    EQUAL("="),
+
+    /**
+     * Relational operator: not equal.
+     */
+    NOT_EQUAL("<>"),
+
+    /**
+     * Relational operator: greater than.
+     */
+    GREATER_THAN(">"),
+
+    /**
+     * Relational operator: less than.
+     */
+    LESS_THAN("<"),
+
+    /**
+     * Relational operator: greater than or equal.
+     */
+    GREATER_THAN_OR_EQUAL(">="),
+
+    /**
+     * Relational operator: less than or equal.
+     */
+    LESS_THAN_OR_EQUAL("<="),
+
+    /**
+     * Logical operator: logical AND.
      */
     AND("AND"),
 
     /**
-     *Binary operator: raise a number to a power.
+     * Logical operator: logical OR.
      */
     OR("OR"),
 
     /**
-     *Binary operator: raise a number to a power.
+     * Logical operator: logical NOT.
      */
     NOT("NOT"),
 
     /**
-     *Binary operator: raise a number to a power.
+     * Logical operator: exclusive OR.
      */
     XOR("XOR")
+}
+
+/**
+ * Enum representing the built-in mathematical functions in MiniBasic.
+ */
+enum class BuiltInFunction(val function: String) {
+    /**
+     * Exponential function: calculates 10^x.
+     */
+    EXP10("EXP10"),
+
+    /**
+     * Exponential function: calculates e^x.
+     */
+    EXP("EXP"),
+
+    /**
+     * Logarithmic function: base-10 logarithm.
+     */
+    LOG("LOG"),
+
+    /**
+     * Logarithmic function: natural logarithm.
+     */
+    LN("LN"),
+
+    /**
+     * Binary function: raises x to the power y.
+     */
+    POW("POW"),
+
+    /**
+     * Trigonometric function: sine of an angle.
+     */
+    SIN("SIN"),
+
+    /**
+     * Trigonometric function: cosine of an angle.
+     */
+    COS("COS"),
+
+    /**
+     * Trigonometric function: tangent of an angle.
+     */
+    TAN("TAN"),
+
+    /**
+     * Trigonometric function: arc sine of a number.
+     */
+    ASIN("ASIN"),
+
+    /**
+     * Trigonometric function: arc cosine of a number.
+     */
+    ACOS("ACOS"),
+
+    /**
+     * Trigonometric function: arc tangent of a number.
+     */
+    ATN("ATN"),
+
+    /**
+     * Numeric function: absolute value.
+     */
+    ABS("ABS"),
+
+    /**
+     * Numeric function: square root.
+     */
+    SQRT("SQRT"),
+
+    /**
+     * Numeric function: square (x²).
+     */
+    SQR("SQR"),
+
+    /**
+     * Numeric function: reciprocal (1/x).
+     */
+    RECIP("RECIP"),
+
+    /**
+     * Numeric function: integer part of a number.
+     */
+    FLOOR("FLOOR"),
+
+    /**
+     * Numeric function: fractional part of a number.
+     */
+    FRAC("FRAC"),
+
+    /**
+     * Numeric function: returns -1, 0, or 1 depending on the sign of x.
+     */
+    SIGN("SIGN"),
+
+    /**
+     * Binary function: returns the larger of two values.
+     */
+    MAX("MAX"),
+
+    /**
+     * Random function: generates a pseudo-random number in the range [0, 1).
+     */
+    RANDOM("RANDOM"),
+
+    /**
+     * Angle conversion: degrees, minutes and fractions of minutes into decimal representation.
+     */
+    HM_TO_DEG("HM_TO_DEG"),
+
+    /**
+     * Angle conversion: decimal representation into degrees, minutes and fractions of minutes.
+     */
+    DEG_TO_HM("DEG_TO_HM"),
+
+    /**
+     * Angle conversion: degrees, minutes, seconds into decimal representation.
+     */
+    HMS_TO_DEG("HMS_TO_DEG"),
+
+    /**
+     * Angle conversion: decimal representation into degrees, minutes and seconds.
+     */
+    DEG_TO_HMS("DEG_TO_HMS")
+}
+
+/**
+ * Enum representing the built-in mathematical constants in MiniBasic.
+ */
+enum class Constant(val constant: String) {
+    /**
+     * Mathematical constant π.
+     */
+    PI("PI"),
+
+    /**
+     * Euler's number.
+     */
+    E("E")
 }
 
 enum class Bracket(val bracket: String) {
     LEFT("("),
     RIGHT(")")
+}
+
+/**
+ * Enum representing the delimiters in MiniBasic.
+ */
+enum class Delimiter(val delimiter: String) {
+    /**
+     * Separates arguments in multi-argument function calls.
+     */
+    COMMA(",")
 }

@@ -236,4 +236,138 @@ class LexerTest {
         Assert.assertEquals(Token(TokenType.KEYWORD, "STOP"), tokens[46])
     }
 
+    @Test
+    fun `Scenario - decimal number`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 LET x = 3.75")
+        Assert.assertEquals(6, tokens.size)
+        Assert.assertEquals(Token(TokenType.NUMBER, "10"), tokens[0])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "LET"), tokens[1])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "x"), tokens[2])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "="), tokens[3])
+        Assert.assertEquals(Token(TokenType.NUMBER, "3.75"), tokens[4])
+        Assert.assertEquals(Token(TokenType.EOF, "EOF"), tokens[5])
+    }
+
+    @Test
+    fun `Scenario - underscore identifier`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 LET total_sum = 5")
+        Assert.assertEquals(6, tokens.size)
+        Assert.assertEquals(Token(TokenType.NUMBER, "10"), tokens[0])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "LET"), tokens[1])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "total_sum"), tokens[2])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "="), tokens[3])
+        Assert.assertEquals(Token(TokenType.NUMBER, "5"), tokens[4])
+        Assert.assertEquals(Token(TokenType.EOF, "EOF"), tokens[5])
+    }
+
+    @Test
+    fun `Scenario - not equal operator`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 IF a <> b THEN END")
+        Assert.assertEquals(8, tokens.size)
+        Assert.assertEquals(Token(TokenType.NUMBER, "10"), tokens[0])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "IF"), tokens[1])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "a"), tokens[2])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "<>"), tokens[3])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "b"), tokens[4])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "THEN"), tokens[5])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "END"), tokens[6])
+    }
+
+    @Test
+    fun `Scenario - less than or equal operator`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 IF a <= b THEN END")
+        Assert.assertEquals(8, tokens.size)
+        Assert.assertEquals(Token(TokenType.OPERATOR, "<="), tokens[3])
+    }
+
+    @Test
+    fun `Scenario - greater than or equal operator`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 IF a >= b THEN END")
+        Assert.assertEquals(8, tokens.size)
+        Assert.assertEquals(Token(TokenType.OPERATOR, ">="), tokens[3])
+    }
+
+    @Test
+    fun `Scenario - word operators`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 IF a AND b OR c XOR NOT d THEN END")
+        Assert.assertEquals(13, tokens.size)
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "a"), tokens[2])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "AND"), tokens[3])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "b"), tokens[4])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "OR"), tokens[5])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "c"), tokens[6])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "XOR"), tokens[7])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "NOT"), tokens[8])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "d"), tokens[9])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "THEN"), tokens[10])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "END"), tokens[11])
+    }
+
+    @Test
+    fun `Scenario - case insensitive keywords`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 let x = 5")
+        Assert.assertEquals(6, tokens.size)
+        Assert.assertEquals(Token(TokenType.KEYWORD, "LET"), tokens[1])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "x"), tokens[2])
+    }
+
+    @Test
+    fun `Scenario - case insensitive word operator`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 IF a and b THEN END")
+        Assert.assertEquals(8, tokens.size)
+        Assert.assertEquals(Token(TokenType.OPERATOR, "AND"), tokens[3])
+    }
+
+    @Test
+    fun `Scenario - REM comment is skipped`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("REM ax2 + bx + c = 0")
+        Assert.assertEquals(1, tokens.size)
+        Assert.assertEquals(Token(TokenType.EOF, "EOF"), tokens[0])
+    }
+
+    @Test
+    fun `Scenario - REM comment then statement on next line`() {
+        val miniBasicCode = """
+            REM this is a comment
+            10 LET x = 5
+        """.trimIndent()
+        val lexer = Lexer()
+        val tokens = lexer.tokenize(miniBasicCode)
+        Assert.assertEquals(7, tokens.size)
+        Assert.assertEquals(Token(TokenType.NEWLINE, "\\n"), tokens[0])
+        Assert.assertEquals(Token(TokenType.NUMBER, "10"), tokens[1])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "LET"), tokens[2])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "x"), tokens[3])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "="), tokens[4])
+        Assert.assertEquals(Token(TokenType.NUMBER, "5"), tokens[5])
+        Assert.assertEquals(Token(TokenType.EOF, "EOF"), tokens[6])
+    }
+
+    @Test
+    fun `Scenario - two-argument function with comma`() {
+        val lexer = Lexer()
+        val tokens = lexer.tokenize("10 LET x = POW(2, 8)")
+        Assert.assertEquals(11, tokens.size)
+        Assert.assertEquals(Token(TokenType.NUMBER, "10"), tokens[0])
+        Assert.assertEquals(Token(TokenType.KEYWORD, "LET"), tokens[1])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "x"), tokens[2])
+        Assert.assertEquals(Token(TokenType.OPERATOR, "="), tokens[3])
+        Assert.assertEquals(Token(TokenType.IDENTIFIER, "POW"), tokens[4])
+        Assert.assertEquals(Token(TokenType.BRACKET, "("), tokens[5])
+        Assert.assertEquals(Token(TokenType.NUMBER, "2"), tokens[6])
+        Assert.assertEquals(Token(TokenType.DELIMITER, ","), tokens[7])
+        Assert.assertEquals(Token(TokenType.NUMBER, "8"), tokens[8])
+        Assert.assertEquals(Token(TokenType.BRACKET, ")"), tokens[9])
+        Assert.assertEquals(Token(TokenType.EOF, "EOF"), tokens[10])
+    }
+
 }

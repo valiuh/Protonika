@@ -1,5 +1,6 @@
 package com.valiukh.protonika.minibasic.parsers
 
+import com.valiukh.protonika.minibasic.ASTNode
 import com.valiukh.protonika.minibasic.ForLoopNode
 import com.valiukh.protonika.minibasic.GoSubNode
 import com.valiukh.protonika.minibasic.GotoNode
@@ -7,9 +8,11 @@ import com.valiukh.protonika.minibasic.IdentifierNode
 import com.valiukh.protonika.minibasic.IfNode
 import com.valiukh.protonika.minibasic.InputNode
 import com.valiukh.protonika.minibasic.LetNode
+import com.valiukh.protonika.minibasic.LiteralNode
 import com.valiukh.protonika.minibasic.OperatorBinaryNode
 import com.valiukh.protonika.minibasic.OperatorUnaryNode
 import com.valiukh.protonika.minibasic.PrintNode
+import com.valiukh.protonika.minibasic.ReturnNode
 import com.valiukh.protonika.minibasic.Token
 import com.valiukh.protonika.minibasic.TokenType
 
@@ -19,6 +22,8 @@ import kotlin.test.assertNull
 class LLParserTest {
     private fun assert(condition: Boolean) = kotlin.test.assertTrue(condition)
     private fun parse(tokens: List<Token>) = LLParser().apply { updateTokens(tokens) }.parse()
+
+    private fun ASTNode.lit(): String = (this as LiteralNode).value
 
     @Test
     fun `Scenario - LET`() {
@@ -215,7 +220,7 @@ class LLParserTest {
         assert(result is PrintNode)
 
         val printNode = result as PrintNode
-        assert(printNode.expression == "x")
+        assert(printNode.expression.lit() == "x")
     }
 
     @Test
@@ -291,7 +296,7 @@ class LLParserTest {
         )
 
         val abstractSyntaxTree = parse(tokens)
-        assert(abstractSyntaxTree.size == 3)
+        assert(abstractSyntaxTree.size == 2)
         val result = abstractSyntaxTree[1]
         assert(result is IfNode)
 
@@ -334,7 +339,7 @@ class LLParserTest {
         )
 
         val abstractSyntaxTree = parse(tokens)
-        assert(abstractSyntaxTree.size == 3)
+        assert(abstractSyntaxTree.size == 2)
         val result = abstractSyntaxTree[1]
         assert(result is IfNode)
 
@@ -386,9 +391,9 @@ class LLParserTest {
 
         val forNode = result as ForLoopNode
         assert(forNode.variable == "i")
-        assert(forNode.start == 1)
-        assert(forNode.end == 10)
-        assert(forNode.step == 10)
+        assert(forNode.start.lit() == "1")
+        assert(forNode.end.lit() == "10")
+        assert(forNode.step.lit() == "10")
         assert(forNode.body.isEmpty())
     }
 
@@ -421,9 +426,9 @@ class LLParserTest {
 
         val forNode = result as ForLoopNode
         assert(forNode.variable == "i")
-        assert(forNode.start == 1)
-        assert(forNode.end == 10)
-        assert(forNode.step == 2)
+        assert(forNode.start.lit() == "1")
+        assert(forNode.end.lit() == "10")
+        assert(forNode.step.lit() == "2")
         assert(forNode.body.size == 1)
 
         val bodyNode = forNode.body[0]
@@ -432,6 +437,66 @@ class LLParserTest {
         val letNode = bodyNode as LetNode
         assert(letNode.variable == "x")
         assert(letNode.value == "20")
+    }
+
+    @Test
+    fun `Scenario - RETURN standalone`() {
+        val tokens = listOf(
+            Token(TokenType.NUMBER, "10"),
+            Token(TokenType.KEYWORD, "RETURN"),
+            Token(TokenType.EOF, "EOF")
+        )
+
+        val abstractSyntaxTree = parse(tokens)
+        assert(abstractSyntaxTree.size == 2)
+        assert(abstractSyntaxTree[1] is ReturnNode)
+    }
+
+    @Test
+    fun `Scenario - LET with operator precedence`() {
+        val tokens = listOf(
+            Token(TokenType.KEYWORD, "LET"),
+            Token(TokenType.IDENTIFIER, "x"),
+            Token(TokenType.OPERATOR, "="),
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.OPERATOR, "+"),
+            Token(TokenType.NUMBER, "3"),
+            Token(TokenType.OPERATOR, "*"),
+            Token(TokenType.NUMBER, "4"),
+            Token(TokenType.EOF, "EOF")
+        )
+
+        val letNode = parse(tokens)[0] as LetNode
+        val add = letNode.expression[0] as OperatorBinaryNode
+        assert(add.operator == "+")
+        assert(add.leftValue == "2")
+
+        val mul = add.rightExpression[0] as OperatorBinaryNode
+        assert(mul.operator == "*")
+        assert(mul.leftValue == "3")
+        assert(mul.rightValue == "4")
+    }
+
+    @Test
+    fun `Scenario - LET with two-argument function`() {
+        val tokens = listOf(
+            Token(TokenType.KEYWORD, "LET"),
+            Token(TokenType.IDENTIFIER, "x"),
+            Token(TokenType.OPERATOR, "="),
+            Token(TokenType.KEYWORD, "POW"),
+            Token(TokenType.OPERATOR, "("),
+            Token(TokenType.NUMBER, "2"),
+            Token(TokenType.DELIMITER, ","),
+            Token(TokenType.NUMBER, "8"),
+            Token(TokenType.OPERATOR, ")"),
+            Token(TokenType.EOF, "EOF")
+        )
+
+        val letNode = parse(tokens)[0] as LetNode
+        val pow = letNode.expression[0] as OperatorBinaryNode
+        assert(pow.operator == "POW")
+        assert(pow.leftValue == "2")
+        assert(pow.rightValue == "8")
     }
 
 }

@@ -12,6 +12,18 @@ sealed class ASTNode
 class StopNode() : ASTNode()
 
 /**
+ * Represents a RETURN statement in the AST.
+ */
+class ReturnNode() : ASTNode()
+
+/**
+ * Represents a literal primary (number or identifier reference) inside an expression.
+ *
+ * @property value The raw literal or identifier text.
+ */
+data class LiteralNode(val value: String) : ASTNode()
+
+/**
  * Represents an empty statement in the AST.
  */
 class EmptyNode() : ASTNode()
@@ -45,7 +57,7 @@ data class IdentifierNode(
  *
  * @property expression The expression to print.
  */
-data class PrintNode(val expression: String) : ASTNode()
+data class PrintNode(val expression: ASTNode) : ASTNode()
 
 /**
  * Represents an INPUT statement in the AST.
@@ -80,9 +92,9 @@ data class IfNode(
  */
 data class ForLoopNode(
     val variable: String,
-    val start: Int,
-    val end: Int,
-    val step: Int,
+    val start: ASTNode,
+    val end: ASTNode,
+    val step: ASTNode,
     val body: List<ASTNode>
 ) : ASTNode()
 
