@@ -7,7 +7,6 @@ The Elektronika MK-61 Virtual Machine (VM) is a faithful software simulation of 
 ## Table of Contents
 - [Architecture](#architecture)
 - [Command Set](#command-set)
-- [Script Execution](#script-execution)
 - [Sample Algorithms](#sample-algorithms)
     - [Factorial Calculation](#factorial-calculation)
     - [Quadratic Equation Solver](#quadratic-equation-solver)
@@ -73,47 +72,8 @@ All supported commands are defined in the `Command` enum. Here are categorized h
 
 ---
 
-## Script Execution
-
-To build a stand alone virtual machine, use the following command:
-```sh
-kotlinc Mk61.kt tools/neutronika.kt -include-runtime -d tools/neutronika.jar
-```
-
-Scripts for this virtual machine are saved in `*.mk61` files.
-
-To run a script, use the following command:
-```sh
-java -jar neutronika.jar -s script.mk61 -r y
-```
-Where:
-- `-s` specifies the script path
-- `-r y` (or `yes`) instructs the VM to produce an output file
-
-### Output
-The output is saved as `*.cnl` and displays:
-```
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-Stack:
-X: 0.0
-Y: 0.0
-Z: 0.0
-T: 0.0
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-Register of the Previous Result:
-X1: 0.0
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-Registers:
-0: 0.0       7: 0.0
-1: 0.0       8: 0.0
-2: 0.0       9: 0.0
-3: 0.0       a: 0.0
-             b: 0.0
-4: 0.0       c: 0.0
-5: 0.0       d: 0.0
-6: 0.0       e: 0.0
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-```
+Script execution instructions for the runnable CLI are documented in
+[`shared/VirtualMachineCli/README.md`](../VirtualMachineCli/README.md).
 
 ---
 
