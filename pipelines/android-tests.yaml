@@ -51,7 +51,3 @@ workflows:
       - androidApp/build/test-results/**/*
       - shared/build/reports/**/*
       - shared/build/test-results/**/*
-      - shared/VirtualMachine/build/reports/**/*
-      - shared/VirtualMachine/build/test-results/**/*
-      - shared/VirtualMachineCli/build/reports/**/*
-      - shared/VirtualMachineCli/build/test-results/**/*

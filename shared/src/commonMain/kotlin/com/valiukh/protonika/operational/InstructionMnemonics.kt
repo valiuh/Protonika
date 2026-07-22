@@ -3,7 +3,7 @@ package com.valiukh.protonika.operational
 import com.valiukh.protonika.compose.components.input.MkButtonType
 import com.valiukh.protonika.compose.components.input.MkPrimaryFunctionType
 import com.valiukh.protonika.compose.components.input.MkSecondaryFunctionType
-import com.valiukh.protonika.virtualmachine.Command
+import com.valiukh.virtualmachine.Command
 
 /**
  * Maps a base key press (no active F/K modifier) to the virtual machine [Command] it

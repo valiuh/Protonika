@@ -10,7 +10,7 @@ import com.valiukh.protonika.operational.usecases.GetActiveScriptUseCase
 import com.valiukh.protonika.operational.OperationalConsoleViewModel
 import com.valiukh.protonika.operational.usecases.ReadScriptUseCase
 import com.valiukh.protonika.operational.usecases.SaveScriptUseCase
-import com.valiukh.protonika.virtualmachine.Mk61
+import com.valiukh.virtualmachine.Mk61
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.coroutines.Dispatchers
 import kotlin.test.Test

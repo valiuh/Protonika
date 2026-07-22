@@ -30,6 +30,3 @@ dependencyResolutionManagement {
 
 include(":androidApp")
 include(":shared")
-include(":shared:VirtualMachine")
-include(":shared:VirtualMachineCli")
-include(":shared:MiniBasic")

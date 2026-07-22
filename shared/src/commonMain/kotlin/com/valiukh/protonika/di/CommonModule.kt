@@ -1,8 +1,7 @@
 package com.valiukh.protonika.di
 
-import com.valiukh.protonika.data.script.ScriptRepository
-import com.valiukh.protonika.domain.script.ScriptRepositoryImpl
-import com.valiukh.protonika.virtualmachine.Mk61
+import com.valiukh.virtualmachine.Mk61
+import com.valiukh.microbasic.Lexer
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

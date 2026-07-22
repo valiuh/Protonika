@@ -52,10 +52,6 @@ workflows:
       - androidApp/build/test-results/**/*
       - shared/build/reports/**/*
       - shared/build/test-results/**/*
-      - shared/VirtualMachine/build/reports/**/*
-      - shared/VirtualMachine/build/test-results/**/*
-      - shared/VirtualMachineCli/build/reports/**/*
-      - shared/VirtualMachineCli/build/test-results/**/*
 
   android-build-deploy:
     name: Android Build and Firebase Deploy
@@ -94,17 +90,6 @@ workflows:
         script: |
           bash pipelines/scripts/android-deploy-firebase-app-distribution.sh
 
-      - name: Stage 2.5 - Build Neutronika Mk-61 Virtual Machine JAR
-        script: |
-          set -euo pipefail
-          ./gradlew :shared:VirtualMachineCli:fatJar --stacktrace
-          ls -lah shared/VirtualMachineCli/build/libs
-
-      - name: Stage 2.6 - Upload Neutronika Mk-61 Virtual Machine JAR to Firebase Storage
-        script: |
-          bash pipelines/scripts/android-upload-neutronika-jar-to-storage.sh
-
     artifacts:
       - release_notes.txt
       - androidApp/build/outputs/**/*.apk
-      - shared/VirtualMachineCli/build/libs/*-all.jar

@@ -39,8 +39,8 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
         }
         commonMain.dependencies {
-            implementation(projects.shared.virtualMachine)
-            implementation(projects.shared.miniBasic)
+            implementation(libs.mk61.virtual.machine)
+            implementation(libs.mk61.micro.basic)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
